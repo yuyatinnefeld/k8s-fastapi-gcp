@@ -7,7 +7,7 @@ Template for a Python FastAPI with Dockerfile and configuration for Kubernetes
 
 ## Tech Stacks
 - Service: FastAPI
-- DB: Postgresql (Cloud Storage)
+- DB: Postgresql (Cloud SQL)
 - Deploy Management: Docker / Kubernetes
 
 ## DB setup
