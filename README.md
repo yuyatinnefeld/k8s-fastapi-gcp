@@ -5,6 +5,38 @@
 
 Template for a Python FastAPI with Dockerfile and configuration for Kubernetes
 
+## Tech Stacks
+- Service: FastAPI
+- DB: Postgresql (Cloud Storage)
+- Deploy Management: Docker / Kubernetes
+
+## DB setup
+
+Setup SQL DB (Cloud SQL)
+```bash
+instance_name = "postgresql-instance"
+user_name = "postgres"
+password = "password"
+private_ip = "10.5.48.4"
+db_name = "sample-db"
+```
+
+Create DB Connection
+```bash
+# download the Cloud SQL Proxy (ubuntu terminal)
+curl -o cloud_sql_proxy https://dl.google.com/cloudsql/cloud_sql_proxy.darwin.amd64
+
+# make the proxy executable
+chmod +x cloud_sql_proxy
+
+POSTGRES_CONN_NAME="yuyatinnefeld-dev:europe-west1:postgresql-instance"
+export POSTGRES_PASSWORD="password"
+
+# create proxy connection
+./cloud_sql_proxy -instances=${POSTGRES_CONN_NAME}=tcp:3306
+
+```
+
 ## Development setup
 
 To run (in isolation), either:
