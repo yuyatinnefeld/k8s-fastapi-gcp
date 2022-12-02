@@ -12,42 +12,51 @@ Template for a Python FastAPI with Dockerfile and configuration for Kubernetes
 
 ## DB setup
 
-Setup SQL DB (Cloud SQL)
+Create a SQL DB (Cloud SQL + Terraform)
 ```bash
-instance_name = "postgresql-instance"
-user_name = "postgres"
-password = "password"
-private_ip = "10.5.48.4"
-db_name = "sample-db"
+# create sql instance
+terraform init
+terraform apply
+
+# activate cloud sql public access too
+
+# verify the private ip address and set as env vars
+export PRIVATE_IP="10.95.0.3"
+export ENV="DEV"
 ```
 
 Create DB Connection
 ```bash
-# download the Cloud SQL Proxy (ubuntu terminal)
+# download the Cloud SQL Proxy (terminal)
 curl -o cloud_sql_proxy https://dl.google.com/cloudsql/cloud_sql_proxy.darwin.amd64
 
 # make the proxy executable
 chmod +x cloud_sql_proxy
 
 POSTGRES_CONN_NAME="yuyatinnefeld-dev:europe-west1:postgresql-instance"
-export POSTGRES_PASSWORD="password"
 
 # create proxy connection
 ./cloud_sql_proxy -instances=${POSTGRES_CONN_NAME}=tcp:3306
 
 ```
 
-## Development setup
+## Development setup (local terminal)
 
-To run (in isolation), either:
+Setup GCP Config:
+    gcloud init
+    
+    # verify the project_id 
+    gcloud config list
 
 Run from active Python environment using `uvicorn`:
 
     pip install -r requirements.txt
     uvicorn service.main:app --host 0.0.0.0 --port 8080 --reload
 
+Navigate to http://localhost:8080/docs to test the API.
+
 Or build and run the Docker container:
-    export VERSION="1.0.1"
+    export VERSION="2.0.0"
 
     docker build -t yuya_simple_fastapi:$VERSION .
     docker run -p 8080:8080 --name k-fastapi yuya_simple_fastapi:$VERSION
@@ -80,6 +89,13 @@ You may also need to make the image public as well.
 
     gcloud components install kubectl
 
+    # create config map with declarative way
+    kubectl create -f config-map.yaml
+
+    # view config maps
+    kubectl get configmaps
+
+    # deploy service
     kubectl apply -f api.yaml
 
 If working locally, e.g. using `minikube`, use port forwarding to expose the service:
@@ -99,6 +115,7 @@ If working locally, e.g. using `minikube`, use port forwarding to expose the ser
     kubectl delete deployment kf-api
     kubectl delete svc kf-api-svc
     kubectl delete hpa kf-api-hpa
+    terraform destroy
 
 ## Google Cloud clean-up
 
