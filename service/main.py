@@ -1,5 +1,7 @@
-from typing import Union
+import os
+import random
 
+from typing import Union
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
 
@@ -20,10 +22,21 @@ def get_db():
 
 app = FastAPI()
 
+color_codes = {
+    "red": "#e74c3c",
+    "green": "#16a085",
+    "blue": "#2980b9",
+    "blue2": "#30336b",
+    "pink": "#be2edd",
+    "darkblue": "#130f40"
+}
+
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    color = os.environ.get('APP_COLOR') or random.choice(["red","green","blue","blue2","darkblue","pink"])
+    print(color)
+    return {"Hello": "World", "Color": color}
 
 
 @app.get("/items/{item_id}")
