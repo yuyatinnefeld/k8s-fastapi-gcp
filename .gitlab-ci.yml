@@ -63,9 +63,7 @@ stages:
     - terraform plan -var-file=./${ENVIRONMENT}.tfvars
   artifacts:
     paths:
-      - ${TF_ROOT}/credentials
-      - ${TF_ROOT}/plan.cache
-      - ${TF_ROOT}/plan.json
+      - ${TF_ROOT}/creds
 
 tf-plan-dev:
   extends:
