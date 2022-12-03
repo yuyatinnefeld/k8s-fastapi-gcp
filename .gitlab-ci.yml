@@ -157,7 +157,7 @@ tf-apply-prod:
     - gcloud builds submit --tag "eu.gcr.io/${GCP_PROJECT_ID}/${REPO}/${IMAGE}:${VERSION}"
   when: manual
 
-gcr-push-dev
+gcr-push-dev:
   extends:
     - .gcr-push
   before_script: 
