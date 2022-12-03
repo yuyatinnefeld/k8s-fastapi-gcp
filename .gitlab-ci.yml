@@ -28,6 +28,7 @@ stages:
   - tf-validate
   - tf-plan
   - tf-apply
+  - gcr-push
 
 ############### gke cluster deploy #################
 .gke-deploy:
@@ -146,3 +147,24 @@ tf-apply-prod:
     ENVIRONMENT: "prod"
   only:
     - master
+
+############### push registry #################
+.gcr-push:
+  stage: gcr-push
+  image: ${CLOUD_SDK_IMAGE}
+  script:
+    - gcloud config set project ${GCP_PROJECT_ID}
+    - gcloud builds submit --tag "eu.gcr.io/${GCP_PROJECT_ID}/${REPO}/${IMAGE}:${VERSION}"
+  when: manual
+
+gcr-push-dev
+  extends:
+    - .gcr-push
+  before_script: 
+    - gcloud auth activate-service-account --key-file ${GCP_SERVICE_ACCOUNT_KEY_DEV}
+  variables:
+    GCP_PROJECT_ID: ${GCP_PROJECT_DEV}
+    REPO: backend-repo
+    IMAGE: yuya_simple_fastapi
+    VERSION: 1.0.0
+  when: manual
