@@ -23,8 +23,8 @@ before_script:
   - terraform init
 
 stages:
-  - # validate
-  - # plan
+  #- validate
+  #-  plan
   - apply
 
 # ############### terraform validate #################
