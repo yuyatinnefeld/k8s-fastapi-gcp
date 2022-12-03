@@ -6,6 +6,7 @@ image:
 
 variables:
   TF_ROOT: ${CI_PROJECT_DIR}/terraform
+  CLOUD_SDK_IMAGE: google/cloud-sdk:slim
 
 cache:
   key: ${TF_ROOT}
@@ -23,13 +24,41 @@ before_script:
   - terraform init
 
 stages:
-  - validate
-  -  plan
-  - apply
+  - gke-deploy
+  - tf-validate
+  - tf-plan
+  - tf-apply
+
+############### gke cluster deploy #################
+.gke-deploy:
+  image: ${CLOUD_SDK_IMAGE}
+  stage: gke-deploy
+  script:
+    - gcloud config set project ${PROJECT_ID}
+    - gcloud config set compute/zone europe-west1-b
+    - gcloud container clusters create ${CLUSTER_NAME} --num-nodes=2 --network ${VPC_NETWORK}
+  when: manual
+
+gke-deploy-dev:
+  extends:
+    - .gke-deploy
+  before_script:
+    - gcloud auth activate-service-account --key-file ${GCP_SERVICE_ACCOUNT_KEY}
+  variables:
+    GCP_PROJECT_ID: ${GCP_PROJECT_DEV}
+    GCP_SERVICE_ACCOUNT_KEY: ${GCP_SERVICE_ACCOUNT_KEY_DEV}
+    CLUSTER_NAME: my-fastapi-node
+    VPC_NETWORK: vpc-mainnet
+  except:
+    - master
+    - /^release.*$/
+    - /^hotfix.*$/
+    - tags
+
 
 ############### terraform validate #################
 .tf-validate:
-  stage: validate
+  stage: tf-validate
   script:
     - terraform validate
   when: manual
@@ -59,7 +88,7 @@ tf-validate-prod:
 
 ############### terraform plan #################
 .tf-plan:
-  stage: plan
+  stage: tf-plan
   script:
     - terraform plan -var-file=./${ENVIRONMENT}.tfvars
   artifacts:
@@ -92,7 +121,7 @@ tf-plan-prod:
 
 ############### terraform apply #################
 .tf-apply:
-  stage: apply
+  stage: tf-apply
   script:
     - terraform apply -var-file=./${ENVIRONMENT}.tfvars -auto-approve
   when: manual

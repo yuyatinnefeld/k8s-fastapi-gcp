@@ -6,32 +6,18 @@
 Template for a Python FastAPI with Dockerfile and configuration for Kubernetes
 
 ## Tech Stacks
-- Provider: GCP
+- Cloud Provider: GCP
 - Backend Service: FastAPI
 - DB: Postgresql (Cloud SQL)
-- Deploy Management: GKE
+- Cluster Management: GKE
 - CICD: Gitlab
 
-## Create a DB and GKE cluster (Cloud Shell / Terminal)
+## Create a Postgres DB and GKE Cluster (Gitlab)
 ```bash
-# we are using vpc-mainnet for cloud sql instance
+# we are using the vpc "vpc-mainnet" for the cloud sql instance
 
-# create gcp resources
-cd terraform
-terraform init
-terraform apply
-```
-
-## Google Cloud GKE initial setup (Cloud Shell)
-```bash
-# set env vars
-bash env.sh
-
-# create gke cluster
-gcloud config set project $PROJECT_ID
-gcloud config set compute/zone europe-west1-b
-gcloud container clusters create $CLUSTER_NAME --num-nodes=2 --network $VPC_NETWORK
-gcloud container clusters get-credentials $CLUSTER_NAME
+# details: 
+cat .gitlab-ci.yml
 ```
 
 ## Test DB Connection 1 (Cloud Shell)
@@ -47,7 +33,6 @@ curl -o cloud_sql_proxy https://dl.google.com/cloudsql/cloud_sql_proxy.darwin.am
 # make the proxy executable
 chmod +x cloud_sql_proxy
 
-POSTGRES_CONN_NAME="yuyatinnefeld-dev:europe-west1:my-postgresql-instance-test"
 
 # create proxy connection
 ./cloud_sql_proxy -instances=${POSTGRES_CONN_NAME}=tcp:3306
@@ -83,6 +68,9 @@ You may also need to make the image public as well.
 
 ## Kubernetes deployment (Cloud Shell)
 ```bash
+# connect with the cluter
+gcloud container clusters get-credentials $CLUSTER_NAME
+
 cd deploy
 
 # update fastapi docker image version
@@ -116,6 +104,7 @@ https://8080-cs-e503cce9-67f8-4ec8-a12f-469da33403a1.cs-europe-west1-iuzs.clouds
 # clean up cluster config
 kubectl delete -f api.yaml
 kubectl delete -f config-map.yaml
+gcloud container clusters delete $CLUSTER_NAME
 
 # clean up cloud resources
 terraform destroy
