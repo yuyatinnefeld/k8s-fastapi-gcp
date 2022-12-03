@@ -60,8 +60,8 @@ tf-validate-prod:
 .tf-plan:
   stage: plan
   script:
-    - gitlab-terraform plan -var-file=./${ENVIRONMENT}.tfvars
-    - gitlab-terraform plan-json -var-file=./${ENVIRONMENT}.tfvars
+    - terraform plan -var-file=./${ENVIRONMENT}.tfvars
+    - terraform plan-json -var-file=./${ENVIRONMENT}.tfvars
   artifacts:
     paths:
       - ${TF_ROOT}/credentials
@@ -95,7 +95,7 @@ tf-plan-prod:
 .tf-apply:
   stage: apply
   script:
-    - gitlab-terraform apply -auto-approve
+    - terraform apply -auto-approve
   when: manual
 
 tf-apply-dev:
