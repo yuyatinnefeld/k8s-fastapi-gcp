@@ -1,0 +1,116 @@
+image:
+  name: hashicorp/terraform:light
+  entrypoint:
+    - '/usr/bin/env'
+    - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+
+variables:
+  TF_ROOT: ${CI_PROJECT_DIR}/terraform
+
+cache:
+  key: ${TF_ROOT}
+  paths:
+    - ${TF_ROOT}/.terraform/
+
+before_script:
+  - terraform --version
+  - cd ${TF_ROOT}
+  - mkdir -p ./creds
+  - echo $GCP_SERVICE_ACCOUNT_KEY > ./creds/serviceaccount.json
+  - if [[ $ENVIRONMENT == "dev" ]]; then sed -i "s/ENVIRONMENT/dev/" backend.tf ; fi
+  - if [[ $ENVIRONMENT == "test" ]]; then sed -i "s/ENVIRONMENT/test/" backend.tf ; fi
+  - if [[ $ENVIRONMENT == "prod" ]]; then sed -i "s/ENVIRONMENT/prod/" backend.tf ; fi
+  - terraform init
+
+stages:
+  - validate
+  - plan
+  - apply
+
+############### terraform validate #################
+.tf-validate:
+  stage: validate
+  script:
+    - terraform validate
+
+validate-dev:
+  extends:
+    - .tf-validate
+  variables:
+    GCP_PROJECT_ID: ${GCP_PROJECT_ID_DEV}
+    ENVIRONMENT: "dev"
+  except:
+    - master
+    - /^release.*$/
+    - /^hotfix.*$/
+    - tags
+
+validate-prod:
+  extends:
+    - .validate
+  variables:
+    GCP_PROJECT_ID: ${GCP_PROJECT_ID_PROD}
+    ENVIRONMENT: prod
+  only:
+    - master
+
+############### terraform plan #################
+.tf-plan:
+  stage: plan
+  script:
+    - gitlab-terraform plan -var-file=./${ENVIRONMENT}.tfvars
+    - gitlab-terraform plan-json -var-file=./${ENVIRONMENT}.tfvars
+  artifacts:
+    paths:
+      - ${TF_ROOT}/credentials
+      - ${TF_ROOT}/plan.cache
+      - ${TF_ROOT}/plan.json
+
+tf-plan-dev:
+  extends:
+    - .tf-plan
+  variables:
+    GCP_PROJECT_ID: ${GCP_PROJECT_ID_DEV}
+    ENVIRONMENT: "dev"
+  except:
+    - master
+    - /^release.*$/
+    - /^hotfix.*$/
+    - tags
+
+tf-plan-prod:
+  extends:
+    - .tf-plan
+  variables:
+    GCP_PROJECT_ID: ${GCP_PROJECT_ID_PROD}
+    ENVIRONMENT: "prod"
+  only:
+    - master
+
+############### terraform apply #################
+.tf-apply:
+  stage: apply
+  script:
+    - gitlab-terraform apply -auto-approve
+  when: manual
+
+apply-dev:
+  extends:
+    - .tf-apply
+  variables:
+    GCP_PROJECT_ID: ${GCP_PROJECT_ID_DEV}
+    ENVIRONMENT: "dev"
+  except:
+    - master
+    - /^release.*$/
+    - /^hotfix.*$/
+    - tags
+
+apply-prod:
+  extends:
+    - .tf-apply
+  variables:
+    GCP_PROJECT_ID: ${GCP_PROJECT_ID_PROD}
+    ENVIRONMENT: "prod"
+  only:
+    - master

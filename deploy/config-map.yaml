@@ -5,7 +5,6 @@ metadata:
 data:
   APP_COLOR: blue
   APP_MODE: prod
-  DB_INSTANCE: postgresql-instance
   DB_NAME: postgres
   DB_USER: postgres
   DB_PASSWORD: password

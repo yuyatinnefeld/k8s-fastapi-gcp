@@ -14,7 +14,7 @@ Template for a Python FastAPI with Dockerfile and configuration for Kubernetes
 
 ## Create a DB and GKE cluster (Cloud Shell / Terminal)
 ```bash
-# we are using vpc-mainnet for gke cluster and cloud sql instance
+# we are using vpc-mainnet for cloud sql instance
 
 # create gcp resources
 cd terraform
@@ -25,11 +25,9 @@ terraform apply
 ## Google Cloud GKE initial setup (Cloud Shell)
 ```bash
 # set env vars
-export PROJECT_ID="yuyatinnefeld-dev"
-export CLUSTER_NAME="my-fastapi-node"
-export VPC_NETWORK="vpc-mainnet"
+bash env.sh
 
-# connect with the cluster
+# create gke cluster
 gcloud config set project $PROJECT_ID
 gcloud config set compute/zone europe-west1-b
 gcloud container clusters create $CLUSTER_NAME --num-nodes=2 --network $VPC_NETWORK
@@ -38,7 +36,6 @@ gcloud container clusters get-credentials $CLUSTER_NAME
 
 ## Test DB Connection 1 (Cloud Shell)
 ```bash
-export $INSTANCE_NAME=my-postgresql-instance
 gcloud sql connect $INSTANCE_NAME --user=postgres --quiet
 ```
 
@@ -57,7 +54,6 @@ POSTGRES_CONN_NAME="yuyatinnefeld-dev:europe-west1:my-postgresql-instance-test"
 
 # open another terminal
 pip install -r requirements.txt
-export ENV="DEV"
 uvicorn service.main:app --host 0.0.0.0 --port 8080 --reload
 Navigate to http://localhost:8080/docs to test the API.
 ```
@@ -68,7 +64,6 @@ If desired, push the container to Docker Hub yourself, and change all references
 
 ```bash 
 # show all activated ip addresses (public and private)
-export INSTANCE_NAME="my-postgresql-instance"
 echo $(gcloud sql instances describe $INSTANCE_NAME --format 'value(ipAddresses.ipAddress)')
 # update private_id (e.g. 10.5.48.7)
 vi service/database.py
@@ -97,7 +92,7 @@ vi api.yaml
 kubectl create -f config-map.yaml
 
 # view config maps
-ckubectl describe configmaps app-config
+kubectl describe configmaps app-config
 
 # deploy service
 kubectl apply -f api.yaml

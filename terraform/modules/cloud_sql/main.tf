@@ -1,7 +1,7 @@
 resource "google_sql_database_instance" "instance" {
   provider = google-beta
 
-  name             = "my-postgresql-instance"
+  name             = var.db_instance_name
   region           = var.region
   database_version = "POSTGRES_14"
   deletion_protection = false
@@ -10,20 +10,20 @@ resource "google_sql_database_instance" "instance" {
     tier = "db-f1-micro"
     ip_configuration {
       ipv4_enabled    = true
-      private_network = "projects/yuyatinnefeld-dev/global/networks/vpc-mainnet"
+      private_network = var.network_name
     }
   }
 }
 
 resource "google_sql_user" "users" {
-  name     = "postgres"
+  name     = var.db_user
   instance = google_sql_database_instance.instance.name
   host     = "me.com"
-  password = "password"
+  password = var.db_password
 }
 
 
 resource "google_sql_database" "database" {
-  name     = "sample-db"
+  name     = var.db_name
   instance = google_sql_database_instance.instance.name
 }

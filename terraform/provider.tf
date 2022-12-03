@@ -1,4 +1,5 @@
-provider "google-beta" {
-  region = "europe-west1"
-  zone   = "europe-west1-b"
+provider "google" {
+  credentials = file("./creds/serviceaccount.json")
+  project = var.project_id
+  region = var.region
 }
