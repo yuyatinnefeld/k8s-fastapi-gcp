@@ -65,10 +65,17 @@ docker run -p 8080:8080 --name k-fastapi yuyatinnefeld/yuya_simple_fastapi:$VERS
 
 You may also need to make the image public as well.
 
+## Push the container image to Google Container Registry (Gitlab)
+```bash
+cat .gitlab-ci.yml
+```
+
 ## Kubernetes deployment (Cloud Shell)
 ```bash
 # connect with the cluter
-gcloud container clusters get-credentials $CLUSTER_NAME
+gcloud config set project $PROJECT_ID
+gcloud config set compute/zone europe-west1-b
+gcloud container clusters get-credentials $CLUSTER_NAME --zone europe-west1-b
 
 cd deploy
 
