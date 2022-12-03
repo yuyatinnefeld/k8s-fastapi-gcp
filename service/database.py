@@ -15,7 +15,7 @@ if env == "dev":
     private_ip = "127.0.0.1" 
     port = "3306"
 elif env == "prod":
-    private_ip = "10.5.48.7"
+    private_ip = "10.5.48.9"
     port = "5432"
 else:
     print("APP_MODE not defined!")
