@@ -3,19 +3,21 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-
-instance_name = "postgresql-instance"
+# TODO: save in k8s config map
 user_name = "postgres"
 password = "password"
 db_name = "postgres"
 
-env = os.environ['ENV']
+try:
+    env = os.environ['ENV']
+except:
+    env = None
 
-if env == "dev":
+if env == "DEV":
     private_ip = "127.0.0.1" # for the local-testing with proxy
     port = "3306" # for the local-testing with proxy
 else:
-    private_ip = "10.08.15.10"
+    private_ip = "10.5.48.7"
     port = "5432"
 
 # SQLALCHEMY_DATABASE_URL = "sqlite:///./service.db"
