@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
         - name: kf-api
-          image: yuyatinnefeld/yuya_simple_fastapi:1.0.0
+          image: yuyatinnefeld/yuya_simple_fastapi:2.0.1
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
