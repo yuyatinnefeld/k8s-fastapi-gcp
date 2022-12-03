@@ -4,7 +4,7 @@ env                 = "dev"
 region              = "europe-west1"
 
 ### CLOUD SQL ENV ###
-db_instance_name    = "my-postgresql-instance"
+db_instance_name    = "postgresql-db-instance"
 db_name             = "sample-db"
 db_user             = "postgres"
 db_password         = "password"

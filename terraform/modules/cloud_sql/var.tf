@@ -1,3 +1,6 @@
+variable region {
+  type = string
+}
 variable db_instance_name {
   type = string
 }
