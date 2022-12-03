@@ -19,5 +19,4 @@ module "cloud_sql" {
   db_name               = var.db_name
   db_user               = var.db_user
   db_password           = var.db_password
-  db_instance_name      = var.db_instance_name
 }

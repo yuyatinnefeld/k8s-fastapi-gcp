@@ -33,7 +33,7 @@ stages:
   script:
     - terraform validate
 
-validate-dev:
+tf-validate-dev:
   extends:
     - .tf-validate
   variables:
@@ -46,7 +46,7 @@ validate-dev:
     - /^hotfix.*$/
     - tags
 
-validate-prod:
+tf-validate-prod:
   extends:
     - .tf-validate
   variables:
@@ -98,7 +98,7 @@ tf-plan-prod:
     - gitlab-terraform apply -auto-approve
   when: manual
 
-apply-dev:
+tf-apply-dev:
   extends:
     - .tf-apply
   variables:
@@ -111,7 +111,7 @@ apply-dev:
     - /^hotfix.*$/
     - tags
 
-apply-prod:
+tf-apply-prod:
   extends:
     - .tf-apply
   variables:
