@@ -23,70 +23,70 @@ before_script:
   - terraform init
 
 stages:
-  - validate
-  - plan
+  - # validate
+  - # plan
   - apply
 
-############### terraform validate #################
-.tf-validate:
-  stage: validate
-  script:
-    - terraform validate
+# ############### terraform validate #################
+# .tf-validate:
+#   stage: validate
+#   script:
+#     - terraform validate
 
-tf-validate-dev:
-  extends:
-    - .tf-validate
-  variables:
-    GCP_PROJECT_ID: ${GCP_PROJECT_DEV}
-    GCP_SERVICE_ACCOUNT_KEY: ${GCP_SERVICE_ACCOUNT_KEY_DEV}
-    ENVIRONMENT: "dev"
-  except:
-    - master
-    - /^release.*$/
-    - /^hotfix.*$/
-    - tags
+# tf-validate-dev:
+#   extends:
+#     - .tf-validate
+#   variables:
+#     GCP_PROJECT_ID: ${GCP_PROJECT_DEV}
+#     GCP_SERVICE_ACCOUNT_KEY: ${GCP_SERVICE_ACCOUNT_KEY_DEV}
+#     ENVIRONMENT: "dev"
+#   except:
+#     - master
+#     - /^release.*$/
+#     - /^hotfix.*$/
+#     - tags
 
-tf-validate-prod:
-  extends:
-    - .tf-validate
-  variables:
-    GCP_PROJECT_ID: ${ GCP_PROJECT_PROD}
-    GCP_SERVICE_ACCOUNT_KEY: ${GCP_SERVICE_ACCOUNT_KEY_PROD}
-    ENVIRONMENT: "prod"
-  only:
-    - master
+# tf-validate-prod:
+#   extends:
+#     - .tf-validate
+#   variables:
+#     GCP_PROJECT_ID: ${ GCP_PROJECT_PROD}
+#     GCP_SERVICE_ACCOUNT_KEY: ${GCP_SERVICE_ACCOUNT_KEY_PROD}
+#     ENVIRONMENT: "prod"
+#   only:
+#     - master
 
-############### terraform plan #################
-.tf-plan:
-  stage: plan
-  script:
-    - terraform plan -var-file=./${ENVIRONMENT}.tfvars
-  artifacts:
-    paths:
-      - ${TF_ROOT}/creds
+# ############### terraform plan #################
+# .tf-plan:
+#   stage: plan
+#   script:
+#     - terraform plan -var-file=./${ENVIRONMENT}.tfvars
+#   artifacts:
+#     paths:
+#       - ${TF_ROOT}/creds
 
-tf-plan-dev:
-  extends:
-    - .tf-plan
-  variables:
-    GCP_PROJECT_ID: ${GCP_PROJECT_DEV}
-    GCP_SERVICE_ACCOUNT_KEY: ${GCP_SERVICE_ACCOUNT_KEY_DEV}
-    ENVIRONMENT: "dev"
-  except:
-    - master
-    - /^release.*$/
-    - /^hotfix.*$/
-    - tags
+# tf-plan-dev:
+#   extends:
+#     - .tf-plan
+#   variables:
+#     GCP_PROJECT_ID: ${GCP_PROJECT_DEV}
+#     GCP_SERVICE_ACCOUNT_KEY: ${GCP_SERVICE_ACCOUNT_KEY_DEV}
+#     ENVIRONMENT: "dev"
+#   except:
+#     - master
+#     - /^release.*$/
+#     - /^hotfix.*$/
+#     - tags
 
-tf-plan-prod:
-  extends:
-    - .tf-plan
-  variables:
-    GCP_PROJECT_ID: ${GCP_PROJECT_PROD}
-    GCP_SERVICE_ACCOUNT_KEY: ${GCP_SERVICE_ACCOUNT_KEY_PROD}
-    ENVIRONMENT: "prod"
-  only:
-    - master
+# tf-plan-prod:
+#   extends:
+#     - .tf-plan
+#   variables:
+#     GCP_PROJECT_ID: ${GCP_PROJECT_PROD}
+#     GCP_SERVICE_ACCOUNT_KEY: ${GCP_SERVICE_ACCOUNT_KEY_PROD}
+#     ENVIRONMENT: "prod"
+#   only:
+#     - master
 
 ############### terraform apply #################
 .tf-apply:
