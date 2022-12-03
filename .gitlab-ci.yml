@@ -43,10 +43,9 @@ gke-deploy-dev:
   extends:
     - .gke-deploy
   before_script:
-    - gcloud auth activate-service-account --key-file ${GCP_SERVICE_ACCOUNT_KEY}
+    - gcloud auth activate-service-account --key-file ${GCP_SERVICE_ACCOUNT_KEY_DEV}
   variables:
     GCP_PROJECT_ID: ${GCP_PROJECT_DEV}
-    GCP_SERVICE_ACCOUNT_KEY: ${GCP_SERVICE_ACCOUNT_KEY_DEV}
     CLUSTER_NAME: my-fastapi-node
     VPC_NETWORK: vpc-mainnet
   except:
