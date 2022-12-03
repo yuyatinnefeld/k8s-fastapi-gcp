@@ -37,7 +37,8 @@ validate-dev:
   extends:
     - .tf-validate
   variables:
-    GCP_PROJECT_ID: ${GCP_PROJECT_ID_DEV}
+    GCP_PROJECT_ID: ${GCP_PROJECT_DEV}
+    GCP_SERVICE_ACCOUNT_KEY: ${GCP_SERVICE_ACCOUNT_KEY_DEV}
     ENVIRONMENT: "dev"
   except:
     - master
@@ -49,8 +50,9 @@ validate-prod:
   extends:
     - .tf-validate
   variables:
-    GCP_PROJECT_ID: ${GCP_PROJECT_ID_PROD}
-    ENVIRONMENT: prod
+    GCP_PROJECT_ID: ${ GCP_PROJECT_PROD}
+    GCP_SERVICE_ACCOUNT_KEY: ${GCP_SERVICE_ACCOUNT_KEY_PROD}
+    ENVIRONMENT: "prod"
   only:
     - master
 
@@ -70,7 +72,8 @@ tf-plan-dev:
   extends:
     - .tf-plan
   variables:
-    GCP_PROJECT_ID: ${GCP_PROJECT_ID_DEV}
+    GCP_PROJECT_ID: ${GCP_PROJECT_DEV}
+    GCP_SERVICE_ACCOUNT_KEY: ${GCP_SERVICE_ACCOUNT_KEY_DEV}
     ENVIRONMENT: "dev"
   except:
     - master
@@ -82,7 +85,8 @@ tf-plan-prod:
   extends:
     - .tf-plan
   variables:
-    GCP_PROJECT_ID: ${GCP_PROJECT_ID_PROD}
+    GCP_PROJECT_ID: ${GCP_PROJECT_PROD}
+    GCP_SERVICE_ACCOUNT_KEY: ${GCP_SERVICE_ACCOUNT_KEY_PROD}
     ENVIRONMENT: "prod"
   only:
     - master
@@ -98,7 +102,8 @@ apply-dev:
   extends:
     - .tf-apply
   variables:
-    GCP_PROJECT_ID: ${GCP_PROJECT_ID_DEV}
+    GCP_PROJECT_ID: ${GCP_PROJECT_DEV}
+    GCP_SERVICE_ACCOUNT_KEY: ${GCP_SERVICE_ACCOUNT_KEY_DEV}
     ENVIRONMENT: "dev"
   except:
     - master
@@ -110,7 +115,8 @@ apply-prod:
   extends:
     - .tf-apply
   variables:
-    GCP_PROJECT_ID: ${GCP_PROJECT_ID_PROD}
+    GCP_PROJECT_ID: ${GCP_PROJECT_PROD}
+    GCP_SERVICE_ACCOUNT_KEY: ${GCP_SERVICE_ACCOUNT_KEY_PROD}
     ENVIRONMENT: "prod"
   only:
     - master
