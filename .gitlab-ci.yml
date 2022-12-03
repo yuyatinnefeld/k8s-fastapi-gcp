@@ -34,7 +34,7 @@ stages:
   image: ${CLOUD_SDK_IMAGE}
   stage: gke-deploy
   script:
-    - gcloud config set project ${PROJECT_ID}
+    - gcloud config set project ${GCP_PROJECT_ID}
     - gcloud config set compute/zone europe-west1-b
     - gcloud container clusters create ${CLUSTER_NAME} --num-nodes=2 --network ${VPC_NETWORK}
   when: manual
@@ -53,7 +53,6 @@ gke-deploy-dev:
     - /^release.*$/
     - /^hotfix.*$/
     - tags
-
 
 ############### terraform validate #################
 .tf-validate:
