@@ -33,7 +33,6 @@ curl -o cloud_sql_proxy https://dl.google.com/cloudsql/cloud_sql_proxy.darwin.am
 # make the proxy executable
 chmod +x cloud_sql_proxy
 
-
 # create proxy connection
 ./cloud_sql_proxy -instances=${POSTGRES_CONN_NAME}=tcp:3306
 

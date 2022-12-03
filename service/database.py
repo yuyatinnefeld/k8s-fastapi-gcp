@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 db_name = os.environ.get('DB_NAME')
 user_name = os.environ.get('DB_USER')
 password = os.environ.get('DB_PASSWORD')
-env = os.environ.get['APP_MODE']
+env = os.environ.get('APP_MODE')
 
 
 if env == "dev":
