@@ -47,7 +47,7 @@ validate-dev:
 
 validate-prod:
   extends:
-    - .validate
+    - .tf-validate
   variables:
     GCP_PROJECT_ID: ${GCP_PROJECT_ID_PROD}
     ENVIRONMENT: prod
