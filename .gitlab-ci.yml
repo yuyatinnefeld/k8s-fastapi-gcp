@@ -15,11 +15,11 @@ cache:
 
 before_script:
   - terraform --version
-  - cd ${TF_ROOT}
-  - mkdir -p ./creds
   - echo $GCP_SERVICE_ACCOUNT_KEY > ./creds/serviceaccount.json
+  - if [[ $ENVIRONMENT == "dev" ]]; then export GOOGLE_APPLICATION_CREDENTIALS=${GCP_SERVICE_ACCOUNT_KEY_DEV} ; fi
+  - if [[ $ENVIRONMENT == "prod" ]]; then export GOOGLE_APPLICATION_CREDENTIALS=${GCP_SERVICE_ACCOUNT_KEY_PROD} ; fi
+  - cd ${TF_ROOT}
   - if [[ $ENVIRONMENT == "dev" ]]; then sed -i "s/ENVIRONMENT/dev/" backend.tf ; fi
-  - if [[ $ENVIRONMENT == "test" ]]; then sed -i "s/ENVIRONMENT/test/" backend.tf ; fi
   - if [[ $ENVIRONMENT == "prod" ]]; then sed -i "s/ENVIRONMENT/prod/" backend.tf ; fi
   - terraform init
 
@@ -98,6 +98,7 @@ tf-validate-prod:
     - master
 
 ############### terraform plan #################
+
 .tf-plan:
   stage: tf-plan
   script:
