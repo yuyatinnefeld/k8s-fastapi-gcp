@@ -55,6 +55,18 @@ gke-deploy-dev:
     - /^hotfix.*$/
     - tags
 
+gke-deploy-prod:
+  extends:
+    - .gke-deploy
+  before_script:
+    - gcloud auth activate-service-account --key-file ${GCP_SERVICE_ACCOUNT_KEY_PROD}
+  variables:
+    GCP_PROJECT_ID: ${GCP_PROJECT_PROD}
+    CLUSTER_NAME: my-fastapi-node
+    VPC_NETWORK: vpc-mainnet
+  only:
+    - master
+
 ############### terraform validate #################
 .tf-validate:
   stage: tf-validate
