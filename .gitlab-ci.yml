@@ -23,8 +23,8 @@ before_script:
   - terraform init
 
 stages:
-  - gcr-push
-  - gke-deploy
+  - iamge-push
+  - cluster-gen
   - tf-validate
   - tf-plan
   - tf-apply
@@ -32,7 +32,7 @@ stages:
 
 ############### push image to a private registry #################
 .gcr-push:
-  stage: gcr-push
+  stage: iamge-push
   image: ${CLOUD_SDK_IMAGE}
   script:
     - gcloud config set project ${GCP_PROJECT_ID}
@@ -54,7 +54,7 @@ gcr-push-dev:
 ############### gke cluster deploy #################
 .gke-deploy:
   image: ${CLOUD_SDK_IMAGE}
-  stage: gke-deploy
+  stage: cluster-gen
   script:
     - gcloud config set project ${GCP_PROJECT_ID}
     - gcloud config set compute/zone europe-west1-b
@@ -186,7 +186,7 @@ tf-apply-prod:
 .tf-cleanup:
   stage: tf-cleanup
   script:
-    - terraform delete -var-file=./${ENVIRONMENT}.tfvars -auto-approve
+    - terraform destroy -var-file=./${ENVIRONMENT}.tfvars -auto-approve
   when: manual
 
 tf-cleanup-dev:
