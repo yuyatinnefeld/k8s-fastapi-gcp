@@ -13,9 +13,11 @@ Template for a Python FastAPI with Dockerfile and configuration for Kubernetes
 - CICD: Gitlab Runner
 
 ## Create a Postgres DB and GKE Cluster (Gitlab)
-### create k8s node cluster (Gitlab Runner)
 
-### create Cloud SQL instance (Gitlab Runner)
+### push the image to Google Container Registry (Gitlab)
+
+### create k8s node cluster
+### create Cloud SQL instance
 
 
 ## Test DB Connection 1 (Cloud Shell)
@@ -24,7 +26,7 @@ INSTANCE_NAME="postgresql-db-instance"
 gcloud sql connect ${INSTANCE_NAME} --user=postgres --quiet
 ```
 
-## Test DB Connection 2 (Local Terminal)
+## Test DB Connection 2 (Run Locally)
 ```bash
 # download the Cloud SQL Proxy (terminal)
 curl -o cloud_sql_proxy https://dl.google.com/cloudsql/cloud_sql_proxy.darwin.amd64
@@ -41,7 +43,7 @@ uvicorn service.main:app --host 0.0.0.0 --port 8080 --reload
 Navigate to http://localhost:8080/docs to test the API.
 ```
 
-## Push the container image to Docker Hub (Local Terminal)
+## Push the container image to Docker Hub (Run Locally)
 
 If desired, push the container to Docker Hub yourself, and change all references to the image accordingly.
 
@@ -64,10 +66,6 @@ docker run -p 8080:8080 --name k-fastapi yuyatinnefeld/yuya_simple_fastapi:$VERS
 
 You may also need to make the image public as well.
 
-## Push the container image to Google Container Registry (Gitlab)
-```bash
-cat .gitlab-ci.yml
-```
 
 ## Kubernetes deployment (Cloud Shell)
 ```bash
@@ -104,13 +102,12 @@ https://8080-cs-e503cce9-67f8-4ec8-a12f-469da33403a1.cs-europe-west1-iuzs.clouds
 ```
 
 
-## Teardown
+## Teardown (Cloud Shell)
 ```bash
 # clean up cluster config
 kubectl delete -f api.yaml
 kubectl delete -f config-map.yaml
 gcloud container clusters delete $CLUSTER_NAME
-
-# clean up cloud resources
-terraform destroy
 ```
+
+### clean up cloud resources (Gitlab)
