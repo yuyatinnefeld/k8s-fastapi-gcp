@@ -23,11 +23,33 @@ before_script:
   - terraform init
 
 stages:
+  - gcr-push
   - gke-deploy
   - tf-validate
   - tf-plan
   - tf-apply
-  - gcr-push
+  - tf-cleanup
+
+############### push image to a private registry #################
+.gcr-push:
+  stage: gcr-push
+  image: ${CLOUD_SDK_IMAGE}
+  script:
+    - gcloud config set project ${GCP_PROJECT_ID}
+    - gcloud builds submit --tag "eu.gcr.io/${GCP_PROJECT_ID}/${REPO}/${IMAGE}:${VERSION}"
+  when: manual
+
+gcr-push-dev:
+  extends:
+    - .gcr-push
+  before_script: 
+    - gcloud auth activate-service-account --key-file ${GCP_SERVICE_ACCOUNT_KEY_DEV}
+  variables:
+    GCP_PROJECT_ID: ${GCP_PROJECT_DEV}
+    REPO: backend-repo
+    IMAGE: yuya_simple_fastapi
+    VERSION: 1.0.0
+  when: manual
 
 ############### gke cluster deploy #################
 .gke-deploy:
@@ -160,23 +182,32 @@ tf-apply-prod:
   only:
     - master
 
-############### push registry #################
-.gcr-push:
-  stage: gcr-push
-  image: ${CLOUD_SDK_IMAGE}
+############### terraform delete #################
+.tf-cleanup:
+  stage: tf-cleanup
   script:
-    - gcloud config set project ${GCP_PROJECT_ID}
-    - gcloud builds submit --tag "eu.gcr.io/${GCP_PROJECT_ID}/${REPO}/${IMAGE}:${VERSION}"
+    - terraform delete -var-file=./${ENVIRONMENT}.tfvars -auto-approve
   when: manual
 
-gcr-push-dev:
+tf-cleanup-dev:
   extends:
-    - .gcr-push
-  before_script: 
-    - gcloud auth activate-service-account --key-file ${GCP_SERVICE_ACCOUNT_KEY_DEV}
+    - .tf-cleanup
   variables:
     GCP_PROJECT_ID: ${GCP_PROJECT_DEV}
-    REPO: backend-repo
-    IMAGE: yuya_simple_fastapi
-    VERSION: 1.0.0
-  when: manual
+    GCP_SERVICE_ACCOUNT_KEY: ${GCP_SERVICE_ACCOUNT_KEY_DEV}
+    ENVIRONMENT: "dev"
+  except:
+    - master
+    - /^release.*$/
+    - /^hotfix.*$/
+    - tags
+
+tf-cleanup-prod:
+  extends:
+    - .tf-cleanup
+  variables:
+    GCP_PROJECT_ID: ${GCP_PROJECT_PROD}
+    GCP_SERVICE_ACCOUNT_KEY: ${GCP_SERVICE_ACCOUNT_KEY_PROD}
+    ENVIRONMENT: "prod"
+  only:
+    - master
