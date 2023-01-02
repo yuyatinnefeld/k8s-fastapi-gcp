@@ -1,4 +1,4 @@
-# Kubernetes Simple Fastapi Project
+# Kubernetes Simple FastAPI Project
 
 
 ## How to Run 🐳
@@ -10,19 +10,18 @@ Template for a Python FastAPI with Dockerfile and configuration for Kubernetes
 - Backend Service: FastAPI
 - DB: Postgresql (Cloud SQL)
 - Cluster Management: GKE
-- CICD: Gitlab
+- CICD: Gitlab Runner
 
 ## Create a Postgres DB and GKE Cluster (Gitlab)
-```bash
-# we are using the vpc "vpc-mainnet" for the cloud sql instance
+### create k8s node cluster (Gitlab Runner)
 
-# details: 
-cat .gitlab-ci.yml
-```
+### create Cloud SQL instance (Gitlab Runner)
+
 
 ## Test DB Connection 1 (Cloud Shell)
 ```bash
-gcloud sql connect $INSTANCE_NAME --user=postgres --quiet
+INSTANCE_NAME="postgresql-db-instance"
+gcloud sql connect ${INSTANCE_NAME} --user=postgres --quiet
 ```
 
 ## Test DB Connection 2 (Local Terminal)
@@ -72,7 +71,7 @@ cat .gitlab-ci.yml
 
 ## Kubernetes deployment (Cloud Shell)
 ```bash
-# connect with the cluter
+# get auth credentials for the cluster to interact with it
 gcloud config set project $PROJECT_ID
 gcloud config set compute/zone europe-west1-b
 gcloud container clusters get-credentials $CLUSTER_NAME --zone europe-west1-b
