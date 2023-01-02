@@ -15,7 +15,6 @@ cache:
 
 before_script:
   - terraform --version
-  - echo $GCP_SERVICE_ACCOUNT_KEY > ./creds/serviceaccount.json
   - if [[ $ENVIRONMENT == "dev" ]]; then export GOOGLE_APPLICATION_CREDENTIALS=${GCP_SERVICE_ACCOUNT_KEY_DEV} ; fi
   - if [[ $ENVIRONMENT == "prod" ]]; then export GOOGLE_APPLICATION_CREDENTIALS=${GCP_SERVICE_ACCOUNT_KEY_PROD} ; fi
   - cd ${TF_ROOT}
