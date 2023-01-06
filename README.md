@@ -101,7 +101,6 @@ verify the result
 https://8080-cs-e503cce9-67f8-4ec8-a12f-469da33403a1.cs-europe-west1-iuzs.cloudshell.dev/docs
 ```
 
-
 ## Teardown (Cloud Shell)
 ```bash
 # clean up cluster config
@@ -111,3 +110,7 @@ gcloud container clusters delete $CLUSTER_NAME
 ```
 
 ### clean up cloud resources (Gitlab)
+```bash
+# open your remote repo
+# trigger the cicd pipeline
+```
